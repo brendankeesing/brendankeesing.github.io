@@ -1,0 +1,368 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Ways To Save Files - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Ways To Save Files</h1>
+	<div class="date">January 26, 2021</div>
+    <div>
+      <p>Saving the player’s progress is a small, yet crucial part of game dev that is often taken seriously too late into a project’s development. Your save system should be well thought out as early as possible as it can shape the way your game works in subtle ways, and can speed up testing throughout production.</p>
+<h1 id="getting-the-data">Getting the Data</h1>
+<p>How do you gather all of the data that you want to save? There’s a few ways to go about this.</p>
+<p>The most obvious is to have the saving system overviewing everything else, so it will pick only the data it needs by direct reference. This is fine for a smaller game, but you will run into trouble when the data it needs is all over the code base. Besides, the save system shouldn’t have access to every other system in the game; it’s violating every good design rule in the book. Another downside is that if you ever want to add or remove data from the file’s layout, the old file will be incompatible. This can be rectified with a file version and lots of if statements, but it will get very tedious if you’re making lots of changes.</p>
+<p>An alternative solution is serialization. Serialization is when binary data in memory is converted in a way that it can be saved to a file. This will involve the save system passing a serializer to the rest of the game which can then serialize itself. That way the save system doesn’t need to know what needs to be saved or how it should be saved; the individual systems can take care of themselves! On the down side, this will require the individual systems to deserialize themselves too and, once again, making any changes to the file’s layout will render it unreadable, but this way it will be up to the subsystems to version themselves.</p>
+<p>Another solution is using a generic hierarchical key-value pair structure. Think of JSON or XML where any primitive types can be stored. The data is not expected to be in any particular layout, so versioning is not so much of an issue (especially if you supply default values when fetching from the file). So saving could look like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">file.SetInt(<span style="color:#e6db74">&#34;playerLevel&#34;</span>, level);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>And reading could then be</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">int</span> level = file.GetInt(<span style="color:#e6db74">&#34;playerLevel&#34;</span>, <span style="color:#ae81ff">1</span>);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>In this case, 1 is the default value if playerLevel doesn’t currently exist.</p>
+<h1 id="choosing-files">Choosing Files</h1>
+<p>If you’re not rolling your own file type, don’t hesitate to use an existing generic data file solution. The main ones are:</p>
+<ul>
+<li>JSON (lean and simple rules to understand, lots of tools available)</li>
+<li>BSON (binary version of JSON, quite a bit more compressed)</li>
+<li>YAML (more readable for humans than json and can have more complex rules)</li>
+<li>XML (a bit verbose but lets you contain multiline data between tags)</li>
+<li>CSV (only really good when data has consistent number of columns, but is super slim and easy to parse)</li>
+</ul>
+<h1 id="compression">Compression</h1>
+<p>The size of save files vary greatly. Some games only need a few bytes to know what stage the player was up to. Others need gigabytes to remember the state of every object the player has ever come across. In the latter case, you might want to look into compressing data. Not only does compression save in storage space, but it can also be faster to load up (since fetching data from hard drives can be insanely slow).</p>
+<p>If your save files are in plain text (such as JSON, YAML and XML), putting your file through any basic encryption algorithm (LZF4, GZIP, LZMA) is going to yield great results. Compression algorithms on binary files are most likely going to reduce the size, but may not be as impressive.</p>
+<p>If your save files are really bloated, often the best way to compress the data is to look at the data you’re trying to save and use the right tool for the job.</p>
+<p>Saving an image? Don’t save it as text and don’t save it as a list of raw bytes. Compress it to a JPEG (lossy) or PNG (lossless) file, or even in your GPU format (DDS, PVRTC, ETC2, etc) for even faster loading.</p>
+<p>Saving a huge series of jumbled bytes? Don’t compress it at all. Compression may not reduce the size and will only slow down loading.</p>
+<p>Saving float/double values to a plain text file? Round the numbers to a specific decimal place. Often the numbers will blow out to something ridiculous like 1.00000003 when it could just be 1, or -547.2374563 can be -547.24. It all comes down to how much precision you need.</p>
+<p>If you&rsquo;re writing your own binary file, you can do other smaller optimisations:</p>
+<ul>
+<li>Convert quaternion rotations (4 numbers) to euler rotations (3 numbers).</li>
+<li>For transform matrices, save the position rotation and scale (9 numbers) instead of the full matrix (16 numbers)</li>
+<li>Convert angles to ints (4 bytes to 1 byte)</li>
+</ul>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">byte</span> CompressAngle(<span style="color:#66d9ef">float</span> angle)
+{
+	angle %= <span style="color:#ae81ff">360</span>;
+	<span style="color:#66d9ef">if</span> (angle &lt; <span style="color:#ae81ff">0</span>)
+		angle += <span style="color:#ae81ff">360</span>;
+	<span style="color:#66d9ef">return</span> (<span style="color:#66d9ef">byte</span>)(<span style="color:#ae81ff">255</span> * angle / <span style="color:#ae81ff">360</span>);
+}
+
+<span style="color:#66d9ef">float</span> DecompressAngle(<span style="color:#66d9ef">byte</span> compressedAngle)
+{
+	<span style="color:#66d9ef">return</span> (<span style="color:#66d9ef">float</span>)compressedAngle * <span style="color:#ae81ff">360</span> / <span style="color:#ae81ff">255</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>If position coordinates can only exist within a space, consider using normalized coordinates within a bounding box (12 bytes to 6 bytes)</li>
+</ul>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">CompressedPosition CompressBoundedPosition(Vector3 position, Bounds bounds)
+{
+	<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">int</span> ushortMax = <span style="color:#ae81ff">65535</span>;
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> CompressedPosition()
+	{
+		x = (<span style="color:#66d9ef">ushort</span>)(Mathf.Clamp01(position.x - bounds.min.x) / (bounds.max.x - bounds.min.x)) * ushortMax),
+		y = (<span style="color:#66d9ef">ushort</span>)(Mathf.Clamp01(position.y - bounds.min.y) / (bounds.max.y - bounds.min.y)) * ushortMax),
+		z = (<span style="color:#66d9ef">ushort</span>)(Mathf.Clamp01(position.z - bounds.min.z) / (bounds.max.z - bounds.min.z)) * ushortMax)
+	};
+}
+
+Vector3 DecompressBoundedPosition(CompressedPosition position, Bounds bounds)
+{
+	<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">int</span> ushortMax = <span style="color:#ae81ff">65535</span>;
+	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Vector3()
+	{
+		x = position.x = bounds.min.x + ((<span style="color:#66d9ef">float</span>)position.x / ushortMax) * (bounds.max.x - bounds.min.x),
+		y = position.x = bounds.min.y + ((<span style="color:#66d9ef">float</span>)position.y / ushortMax) * (bounds.max.y - bounds.min.y),
+		z = position.x = bounds.min.z + ((<span style="color:#66d9ef">float</span>)position.z / ushortMax) * (bounds.max.z - bounds.min.z)
+	};
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<ul>
+<li>If you have a list of boolean values, combine them all into a bitset (1 byte to 1/8 bytes)</li>
+<li>When saving colors, save as bytes instead of floats (12 bytes to 4 bytes), don’t save the alpha if you don’t need to (4 bytes to 3 bytes), and compress to R5G6B5 where you can (3 bytes to 2 bytes).</li>
+</ul>
+<h1 id="encryption">Encryption</h1>
+<p>If you’re making an offline or single player game, forget it. You don’t need encryption. Seriously. If the file is on the player’s local hard drive, they can always find a way to unlock it’s contents. If the player wants to change the contents of their save file then just let them. It may ruin their experience of the game, but it won’t affect other players so it’s fine. <a href="https://www.spiderwebsoftware.com/products.html">Some games</a> even provide tools to let the players modify their save files, allowing them full access to items, abilities, stats and more.</p>
+<p>So what about online multiplayer games? Should it be encrypted? If you have a single player component to your game, save that part of the game locally and read the previous paragraph again. For any multiplayer components, it needs to be saved to the cloud. Whether the data is encrypted or not is irrelevant because it will be on the developer’s server and not accessible by the player. Whenever the player needs access to multiplayer data, it should be done through online calls. Do not save any multiplayer data locally!</p>
+<p>Archiving</p>
+<p>Sometimes one file for saving isn’t enough. You may find that you need a JSON file, PNGs, binary data and an audio file. Sure, you could stick all of this in a horribly-optimised JSON file, but then you will have slow load times, excess memory usage, and a bulky save file. This is a perfect use case for archiving.</p>
+<p>Archiving is simply sticking a bunch of files into a single file. Think of a zip file. You can grab any file type and compress it down to a single file. Zip is great at this, yet it’s not perfect for our needs. Zip requires a large chunk of the file to be decompressed in order to get anything out of it. We want to leave the compression up to the individual files and just pull out what we need as fast as possible.</p>
+<p>The basic idea is simple. You have a header which is a table of contents, and then you have the data. The header contains a list of the files (the name of the file, the start position in the file, and the file size). With this, you can jump to exactly where the file is and read all of the data you need without touching anything else.</p>
+<p><div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#ae81ff">0x00000000</span> Header:
+	file1.txt <span style="color:#960050;background-color:#1e0010">@</span> <span style="color:#ae81ff">0x00004000</span>
+	file2.wav <span style="color:#960050;background-color:#1e0010">@</span> <span style="color:#ae81ff">0x00007000</span>
+	file3.png <span style="color:#960050;background-color:#1e0010">@</span> <span style="color:#ae81ff">0x00012000</span>
+<span style="color:#ae81ff">0x00004000</span> file1.txt:
+	...
+<span style="color:#ae81ff">0x00007000</span> file2.wav:
+	...
+<span style="color:#ae81ff">0x00012000</span> file3.png:
+	...
+</code></pre></td></tr></table>
+</div>
+</div>
+This is super fast, allows you to keep per-file compression, and elegantly keep all data together in a single file.</p>
+<h1 id="reducing-load-times">Reducing Load Times</h1>
+<p>If you have large save files, load times can be brutal, but there are a few things you can do to mitigate it.</p>
+<p>The first thing to look into is reducing the data that you’re saving. Do you need to store the position of every cloud, or can you just save a seed or time and generate it from that?</p>
+<p>Do you need to load everything at once? If you are saving map data, why not just load up the data for the current map and leave the rest until you actually need it. This means that your save file may need to be split up into separate files. Do not use zip or some other compression archiving system for this as all of the files will need to be decompressed just to pull out a single file. Instead, compress each file individually and archive them all in the same file.</p>
+<p>Archiving all of your files will also decrease load times as it will be jumping around less on the hard drive. Load the archive table of contents into memory and then seek to where you need when you need it.</p>
+<p>Compress your files. Compression may seem like an extra step, but extra steps does not necessarily mean longer load times. Hard drives are slow and CPUs are fast. Load less up  from the hard drive and leave it to the CPU to decompress it.</p>
+<h1 id="further-reading">Further Reading</h1>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Archive_file">https://en.wikipedia.org/wiki/Archive_file</a></li>
+</ul>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

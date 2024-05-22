@@ -1,0 +1,401 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Blending Colors - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Blending Colors</h1>
+	<div class="date">November 27, 2020</div>
+    <div>
+      <p>How do you blend between two colors? Chances are, you&rsquo;re just doing a standard lerp (linear interpolation) between RGB values, right? If we were to blend between red and green, we should see something like this:</p>
+<p><img src="/blog/blending_colors/GradientRGB.png" alt="RGB">
+<p class="blogsubtitle">Result = (ColorB - ColorA) * t &#43; ColorA</p></p>
+<p>We love this method because computers love this method, and when computers love something, they do it fast. But, have you ever noticed the weird dull splotch in the center? It&rsquo;s kind of a weird dark desaturated yellow.</p>
+<p><img src="/blog/blending_colors/GradientCenter.png" alt="RGB Center"></p>
+<p>We really lose the vibrancy of the red and green. But shouldn&rsquo;t halfway between two vibrant colors be another vibrant color? So what happened here?</p>
+<h1 id="rgb">RGB</h1>
+<p>The problem lies in the RGB color space. Let&rsquo;s visualise what RGB looks like by plotting the red, green and blue values on different axes.</p>
+<p><img src="/blog/blending_colors/RGBCube.png" alt="RGB Color Space">
+<p class="blogsubtitle">RGB Color Space</p></p>
+<p>A cube is a great way to represent a color space because we can easily see what the stored values (RGB) are just by looking at the axes (XYZ).</p>
+<p>So what is happening when we do a lerp? We are just drawing a straight line from one point on the cube to another.</p>
+<p><img src="/blog/blending_colors/RGBCubeStraight.png" alt="">
+<p class="blogsubtitle">Linear Interpolation between red and green in RGB</p></p>
+<p>Notice how it pierces through the cube to create a straight line. That yucky murky yellow color must be somewhere between those two points. But if you just look at the cube, you can kind of see where you would rather it to go; we want a nice vibrant yellow! This means that we want to bend the line so that it goes along the surface of the cube instead.</p>
+<p><img src="/blog/blending_colors/RGBCubeBent.png" alt="">
+<p class="blogsubtitle">How do we achieve this?</p></p>
+<p>Okay, so what crazy geometry math hack are we going to need to pull this off? Well, I&rsquo;d rather stay away from that sort of crazy math. Instead, let&rsquo;s find an easier way to think about the problem. What if, instead of changing the line to suit the cube, we change the cube to suit the line? In other words, we need to change the color space?</p>
+<h1 id="hsv">HSV</h1>
+<p><img src="/blog/blending_colors/HSVCylinder.png" alt="HSV">
+<p class="blogsubtitle">HSV Color Space</p></p>
+<p>Introducing HSV (Hue Saturation Value)! It&rsquo;s a lot more intuitive, isn&rsquo;t it? The vertical axis increases the lightness, outward for vibrancy, and rotation to pick a hue. Easy! That&rsquo;s why artists love it.</p>
+<p>But there&rsquo;s something odd with this. If you put hue, saturation and value on different axes, you get this instead.</p>
+<p><img src="/blog/blending_colors/HSVCube.png" alt="HSV Cube">
+<p class="blogsubtitle">HSV Color Space?</p></p>
+<p>Kinda ugly isn&rsquo;t it? Yet we get a good glimpse of what our 3 values are actually storing. So what happens now if we do our lerp between our red and green?</p>
+<p><img src="/blog/blending_colors/HSVCylinderStraight.png" alt="">
+<img src="/blog/blending_colors/GradientHSV.png" alt=""></p>
+<p>It goes through the vibrant yellow which looks great. Problem solved!</p>
+<p>But hang on, what about if we try some other colors. What about magenta to yellow?</p>
+<p><img src="/blog/blending_colors/HSVCubeLineAlt.png" alt="">
+<img src="/blog/blending_colors/GradientHSVAlt.png" alt=""></p>
+<p>Ouch, that&rsquo;s not right. Kinda cool, but really not right. Maybe a better way to think about this is to just look at how artists solve this. How does a painter, with full creative liberty over their palette, blend between two colors? If we were to lay it out on the HSV cylinder, you can see how simple it really is.</p>
+<p><img src="/blog/blending_colors/HSVCylinderStraight.png" alt="">
+<p class="blogsubtitle">Artist Blending Colors, simplified</p></p>
+<p>See how it&rsquo;s just a straight line across the cylinder? It&rsquo;s so simple! Yet we haven&rsquo;t been able to achieve this with these damn cubes. What if we ditched the cubes and just got the XYZ coordinates on the HSV cylinder. Then it would just be a normal lerp between the coordinates. Another way of thinking about it is putting our color space cube around the cylinder.</p>
+<h1 id="hsvxyz">HSVxyz</h1>
+<p><img src="/blog/blending_colors/HSVCylinderWireframe.png" alt="">
+<p class="blogsubtitle">HSV Cylinder in XYZ Coordinates (HSVxyz)</p></p>
+<p>Now you might be asking, “What about the empty space outside the cylinder (yet still within the cube)? What if you have values in that empty space? What color will it be?” A color in this empty space is invalid. If you want, you can clamp it to the cylinder, but it ultimately serves no purpose (which means we&rsquo;re technically wasting data).</p>
+<p>Now, let&rsquo;s do the magic. The steps to pull this off is mostly just a series of conversions between color space.</p>
+<p><strong><p class="blogsubtitle">RGB -&gt; HSV -&gt; XYZ -&gt; Interpolate -&gt; HSV -&gt; RGB</p></strong></p>
+<p>The code to do this can be a bit intimidating. I won&rsquo;t go into detail how it all works, but I&rsquo;ll have it here for completeness.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">float3 rgb_to_hsvxyz(float3 rgb)
+{
+	float3 hsv = rgb_to_hsv(rgb);
+	<span style="color:#66d9ef">float</span> r = rotate_around_origin(float2(hsv.y, <span style="color:#ae81ff">0</span>), hsv.x * pi * <span style="color:#ae81ff">2</span>);
+	<span style="color:#66d9ef">return</span> float3(r.x, hsv.z, r.y);
+}
+
+float3 hsvxyz_to_rgb(float3 xyz)
+{
+	<span style="color:#66d9ef">float</span> hue = arctan2(xyz.z, xyz.x) / (pi * -<span style="color:#ae81ff">2</span>);
+	<span style="color:#66d9ef">float</span> sat = length(float2(xyz.x, xyz.z)) * <span style="color:#ae81ff">2</span>;
+	<span style="color:#66d9ef">return</span> hsv_to_rgb(float3(hue, sat, xyz.y));
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>So now you can use it like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">float3 hsvxyz_lerp(float3 colorA, float3 colorB)
+{
+	xyzA = rgb_to_hsvxyz(colorA);
+	xyzB= rgb_to_hsvxyz(colorB);
+	xyz = lerp(xyzA, xyzB, t);
+	<span style="color:#66d9ef">return</span> hsvxyz_to_rgb(xyz);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Obviously this is going to be a lot more computationally expensive than the traditional lerp but screw computers, we want nice looking mid-tones!
+So, brace yourself. Now we get to see the result of all this hard work!</p>
+<p><img src="/blog/blending_colors/GradientXYZ.png" alt=""></p>
+<h1 id="rgb-xyz">RGB² (XYZ)</h1>
+<p>Okay, there&rsquo;s one more strategy for lerping color that I should really mention. We&rsquo;ve mostly been talking about what looks good artistically, but we should also talk about what is physically correct. You see, the way computer colors work is kind of fudged. Light works on a logarithmic scale when compared to what we see from our human eyes. For example, if you wanted to double the brightness of something, you would actually need four times the amount of light. It&rsquo;s important to note that this is a simplification of the XYZ color space (which is kind of the holy grail of color spaces).</p>
+<p>Alright, so how can we harness this to improve our lerping? We just need to convert our RGB color into RGB².</p>
+<p><img src="/blog/blending_colors/SqrCube.png" alt="RGB²">
+<p class="blogsubtitle">RGB²</p></p>
+<p>If you compare this with the original RGB cube, you&rsquo;ll see that the colors are more vibrant in the RGB² cube. So, what if we do our lerp here?</p>
+<p><img src="/blog/blending_colors/GradientSqr.png" alt="RGB² Gradient">
+<p class="blogsubtitle">RGB²</p></p>
+<p>It looks a lot closer to RGB than HSVxyz, but it&rsquo;s significantly brighter in the center. But the greatest part of RGB² is how computationally simpler it is.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">float3 lerp_sqr(float3 colorA, float3 colorB, <span style="color:#66d9ef">float</span> t)
+{
+	<span style="color:#66d9ef">return</span> sqrt(lerp(colorA, colorB, t));
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="comparison">Comparison</h1>
+<p>Finally, here&rsquo;s a comparison with the different types of blending from red to green:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RGB</td>
+<td><img src="/blog/blending_colors/GradientRGB.png" alt="RGB"></td>
+</tr>
+<tr>
+<td>HSV</td>
+<td><img src="/blog/blending_colors/GradientHSV.png" alt="HSV"></td>
+</tr>
+<tr>
+<td>HSVxyz</td>
+<td><img src="/blog/blending_colors/GradientXYZ.png" alt="HSVxyz"></td>
+</tr>
+<tr>
+<td>RGB²</td>
+<td><img src="/blog/blending_colors/GradientSqr.png" alt="RGB²"></td>
+</tr>
+</tbody>
+</table>
+<p>But what about that horrible magenta to yellow?</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RGB</td>
+<td><img src="/blog/blending_colors/GradientRGBAlt.png" alt="RGB"></td>
+</tr>
+<tr>
+<td>HSV</td>
+<td><img src="/blog/blending_colors/GradientHSVAlt.png" alt="HSV"></td>
+</tr>
+<tr>
+<td>HSVxyz</td>
+<td><img src="/blog/blending_colors/GradientXYZAlt.png" alt="HSVxyz"></td>
+</tr>
+<tr>
+<td>RGB²</td>
+<td><img src="/blog/blending_colors/GradientSqrAlt.png" alt="RGB²"></td>
+</tr>
+</tbody>
+</table>
+<h1 id="conclusion">Conclusion</h1>
+<p>So what is the best way to blend your colors? It really depends on what you want, but I would summarize with:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RGB</strong></td>
+<td>Super fast, can have dull mid-tones</td>
+</tr>
+<tr>
+<td><strong>HSV</strong></td>
+<td>Slow and has all sorts of weird rainbow effects</td>
+</tr>
+<tr>
+<td><strong>HSVxyz</strong></td>
+<td>Super slow by gives vibrant mid-tones</td>
+</tr>
+<tr>
+<td><strong>RGB²</strong></td>
+<td>Physically accurate, still quite fast</td>
+</tr>
+</tbody>
+</table>
+<h1 id="further-reading">Further Reading</h1>
+<ul>
+<li><a href="https://bartwronski.com/2020/04/14/bilinear-texture-filtering-artifacts-alternatives-and-frequency-domain-analysis/">https://bartwronski.com/2020/04/14/bilinear-texture-filtering-artifacts-alternatives-and-frequency-domain-analysis/</a></li>
+<li><a href="https://www.youtube.com/watch?v=LKnqECcg6Gw">https://www.youtube.com/watch?v=LKnqECcg6Gw</a></li>
+</ul>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Complex Procedural Driver Animation - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Complex Procedural Driver Animation</h1>
+	<div class="date">June 19, 2021</div>
+    <div>
+      <p>While working on <a href="https://torquedrift.com/">Torque Drift</a>, I was given an opportunity to work on a procedural hand animation solution for the driver. This is a seemingly-ambitious proposition, as drift drivers have lots of crazy hand movements, yet can be achieved by using only basic techniques.</p>
+<p><img src="/blog/complex_procedural_driver_animation/Example.gif" alt="HSV"></p>
+<p>One thing to point out is that this solution is reactive to the player’s input. In other words, the animation will lag behind the player’s actual button presses and will therefore not be 100% accurate. Because there’s so much happening in the cockpit and the player is not reacting to the animation, this should not be a significant issue.</p>
+<p>Although this is using the example of driving, the techniques demonstrated here can be easily extended to very different procedural animation problems.</p>
+<h1 id="breaking-down-the-problem">Breaking Down the Problem</h1>
+<p>To start with, we need a basic rigged character, and a way to perform IK. All of the IK I use are basic 3-point IK solved through trigonometry:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">void</span> Solve3DIK(Transform bone1, Transform bone2, Transform bone3, Vector3 targetPosition, Vector3 bendDir)
+{
+	Vector3 dir = targetPosition - bone1.position;
+
+	<span style="color:#75715e">// Distance between the first and the last node solver positions
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">float</span> length = dir.magnitude;
+	<span style="color:#66d9ef">if</span> (Mathf.Approximately(length, <span style="color:#ae81ff">0</span>))
+		<span style="color:#66d9ef">return</span>;
+
+	<span style="color:#75715e">// Get the direction to the trigonometrically solved position of the second node
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">float</span> sqrMag1 = (bone2.position - bone1.position).sqrMagnitude;
+	<span style="color:#66d9ef">float</span> sqrMag2 = (bone3.position - bone2.position).sqrMagnitude;
+	Vector3 toBendPoint = GetDirectionToBendPoint(dir, length, bendDir, sqrMag1, sqrMag2);
+
+	<span style="color:#75715e">// Position the second node
+</span><span style="color:#75715e"></span>	Quaternion q1 = Quaternion.FromToRotation(bone2.position - bone1.position, toBendPoint);
+	bone1.rotation = q1 * bone1.rotation;
+
+	Quaternion q2 = Quaternion.FromToRotation(bone3.position - bone2.position, targetPosition - bone2.position);
+	bone2.rotation = q2 * bone2.rotation;
+}
+
+<span style="color:#75715e">// Calculates the bend direction based on the law of cosines. Magnitude of the returned vector does not equal the length of the first bone.
+</span><span style="color:#75715e"></span>Vector3 GetDirectionToBendPoint(Vector3 direction, <span style="color:#66d9ef">float</span> directionMag, Vector3 bendDirection, <span style="color:#66d9ef">float</span> sqrMag1, <span style="color:#66d9ef">float</span> sqrMag2)
+{
+    <span style="color:#66d9ef">float</span> x = ((directionMag * directionMag) + (sqrMag1 - sqrMag2)) / (directionMag * <span style="color:#ae81ff">2</span>);
+    <span style="color:#66d9ef">float</span> y = Mathf.Sqrt(Mathf.Max(sqrMag1 - x * x, <span style="color:#ae81ff">0</span>));
+
+    <span style="color:#66d9ef">if</span> (direction == Vector3.zero)
+        <span style="color:#66d9ef">return</span> Vector3.zero;
+    <span style="color:#66d9ef">return</span> Quaternion.LookRotation(direction, bendDirection) * <span style="color:#66d9ef">new</span> Vector3(<span style="color:#ae81ff">0</span>, y, x);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>This IK will be applied on each hand, forearm and upper arm bone set. This will let us place the hand wherever we want. The elbow bend directions will point down and away from the body, and will remain static for our needs.</p>
+<p>All that remains is to figure out where to put the hands. This is the tricky part.</p>
+<h1 id="steering-wheel">Steering Wheel</h1>
+<p>Some observations about how the real world drivers use the steering wheel:</p>
+<ul>
+<li>The hands stay on the steering wheel until their hands are twisting too much.</li>
+<li>If a hand is twisting too much, often one hand will come off while the other stabilizes the wheel.</li>
+<li>If a hard turn needs to be made, both hands are removed from the wheel while it spins.</li>
+<li>After a hand has left the wheel, it will often return to a natural resting point (toward the top of the wheel).</li>
+<li>One hand must occasionally be used to change gears or pull on the handbrake.</li>
+<li>Hands will never land on each other and don’t get in the other’s way.</li>
+</ul>
+<p>To get the obvious out of the way, the steering wheel rotates on a single axis. Because of this, the hands will naturally move along the edge of a circle. We will need to define this circle in 3D space.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SteeringWheel</span>
+{
+	Vector3 origin;
+	Vector3 normal;
+	Vector3 tangent; <span style="color:#75715e">// points toward upward direction of wheel
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">float</span> radius;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>We can also represent a hand as a scalar angle value where 0 is the very top of the wheel, 90° is to the right, -90° is to the left, and ±180° is the bottom of the wheel. With this, we can assign natural rest points for the hands as something like -30° for the left hand and +30° for the right hand.</p>
+<p><img src="/blog/complex_procedural_driver_animation/Angles.png" alt="HSV"></p>
+<p>The next vital piece of the puzzle is coordinate spaces; where are these angles relative to. We said earlier that the 0° is the top of the wheel, but is that the top of the wheel at the wheel’s resting point (i.e. when the car is going straight), or is it the top of the wheel relative to the upward direction of the car? Both answers are subjectively correct and have their own benefits. For example, when the hand clamps down on the wheel, we want it to follow the steering wheel, so the position of the hand must be stored in wheel-space.  However, when we want to pick a place for the hand to land on the wheel, we don’t want it to check wheel space because the wheel may have rotated more than 180°. Instead, we want to choose a placement in car-space. Due to this, we need a way to convert between car-space and wheel-space, which is really simple if we have the angle that the wheel is currently at.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">void</span> ToCarSpace(<span style="color:#66d9ef">float</span> angle)
+{
+	<span style="color:#66d9ef">return</span> wheelAngle - angle;
+}
+
+<span style="color:#66d9ef">void</span> ToWheelSpace(<span style="color:#66d9ef">float</span> angle)
+{
+	<span style="color:#66d9ef">return</span> wheelAngle + angle;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="/blog/complex_procedural_driver_animation/Spaces.png" alt="HSV"></p>
+<p>So how can we use all this? This is roughly how the algorithm works:</p>
+<ol>
+<li>Set wheelAngle to zero, so the wheelAngle = carAngle.</li>
+<li>Place the hands at natural rest angles.</li>
+<li>As wheelAngle rotates (due to steering) the hands will keep their placement angle in wheel-space (so that they rotate with the wheel).</li>
+<li>When the wheel rotates so much that the hand is no longer in a comfortable position (&lt;-70° or &gt;70°), the hand will unclamp it&rsquo;s hand by converting its placement from wheel-space to car-space.</li>
+<li>The hand will then move toward the natural resting point until the steering wheel velocity changes enough to justify the hand clamping down.</li>
+<li>The hand will then convert its position from car-space to wheel-space and will follow the wheel once again.</li>
+<li>Return to step #3.</li>
+</ol>
+<p>There is still one annoying issue: the hands get in the way of each other.</p>
+<p>The first thing we can do is to move the hand away from the wheel. We can just move it in the direction of the wheel’s normal a bit should suffice.</p>
+<p><img src="/blog/complex_procedural_driver_animation/AwayFromWheel.png" alt="HSV"></p>
+<p>The other thing we can do is ensure that a hand will not land on the other. For this, we can set a buffer area around the hand. Using the left hand as an example, it’s fine for the right hand to be close to the right side, but would be weird to be close to the left. So we will make it that the right hand will not clamp down until the left hand is not in the area underneath.</p>
+<p><img src="/blog/complex_procedural_driver_animation/HandArea.png" alt="HSV"></p>
+<h1 id="handbrake">Handbrake</h1>
+<p>When the player hits the handbrake, we need the nearest hand to come off the wheel and move to the handbrake. We can break it down into the following steps:</p>
+<ol>
+<li>Hand is released from the steering wheel (i.e. converted from wheel-space to car space).</li>
+<li>The hand then moves along a linear line toward the handbrake grip (this is a point that should be specified by the artist).</li>
+<li>The hand clamps to the handbrake’s grip, so that wherever the handbrake goes, the hand will follow.</li>
+<li>An animation plays to pull the handbrake in.</li>
+<li>The steps are reversed to get back to the steering wheel.</li>
+</ol>
+<p>I won’t go into detail on how all this works, as it is a similar concept to the steering wheel. One thing I will say, to make it easier, there should be a control value which I’ll call handbrakeAmount. With this, you can run both the steering wheel and handbrake functionality simultaneously, yet on display the hand where it needs to be.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 wheelPosition = CalculateWheelHandPosition();
+Vector3 handbrakePosition = CalculateHandbrakeHandPosition();
+Vector3 handPosition = Vector3.Lerp(wheelPosition, handbrakePosition, handbrakeAmount);
+</code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="gear-stick">Gear Stick</h1>
+<p>Okay, it’s starting to get complicated. We need a single hand to take care of the steering wheel, handbrake, and now the gear stick too! If you have come this far and gotten the handbrake to work, adding another control type for the hand should be simple.</p>
+<p>The gear stick is almost identical to the handbrake.</p>
+<ol>
+<li>Hand is released from the steering wheel (i.e. converted from wheel-space to car space).</li>
+<li>The hand then moves along a linear line toward the gear stick grip (this is a point that should be specified by the artist).</li>
+<li>The hand clamps to the gear stick grip, so that wherever the gear stick goes, the hand will follow.</li>
+<li>An animation plays to make the gear stick go wherever it needs to..</li>
+<li>The steps are reversed to get back to the steering wheel.</li>
+</ol>
+<p>There are many types of gearing systems, and having custom made IK for it could be a real pain. But if you just get the hand to where it needs to be and clamp it in place, you can let the gear stick itself drive the hand.</p>
+<p>In terms of merging this in with our other animation, the trick is to layer lerps on top of each other. For this, we will have a wheelAmount (0 is on either of the sticks, 1 is on the wheel), and a stick amount (0 is on the gears, 1 is on the handbrake).</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 wheelPosition = CalculateWheelHandPosition();
+Vector3 gearPosition = CalculateGearHandPosition();
+Vector3 handbrakePosition = CalculateHandbrakeHandPosition();
+Vector3 handPosition = Vector3.Lerp(gearPosition, handbrakePosition, stickAmount);
+handPosition = Vector3.Lerp(handPosition, wheelPosition, wheelAmount);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>As you can hopefully see, we can get insanely complex and modular behaviour simply by layering on lerps. Getting the driver to scratch his ear, turn up the radio and take a sip from a drink would be easy (for the programmer at least).</p>
+<h1 id="foot-pedals">Foot Pedals</h1>
+<p>After getting through the steering wheel, the foot pedals should be a breeze. It’s the same concept as the handbrake/gear combo, just without the steering wheel.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 acceleratorPosition = GetAcceleratorFootPosition();
+Vector3 brakePosition = GetBrakeFootPosition();
+footPosition = Vector3.Lerp(accleratorPosition, brakePosition, pedalAmount);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Once the foot is in the right position, play out the animation of the foot going down. Easy!</p>
+<h1 id="body-momentum">Body Momentum</h1>
+<p>This is a subtle effect, yet makes a significant step toward realism. When you’re driving at high speed and you slam on the brakes, you can feel your whole body shift forward as your body’s moment tries to catch up to the car’s. This can be achieved by using a spring-like effect at the base of the spine.</p>
+<p>The basic idea of a spring is to keep a separate velocity for the springed object (the driver’s body) and have it try to keep up with its parent object (the car). And, assuming your driver is wearing a seatbelt, ensure that you clamp the final rotation.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 bodyAcceleration = (bodyAcceleration - carAcceleration) * (Time.deltaTime / smoothness);
+spineRotation = Vector3.Clamp(bodyAcceleration, spineMinRotation, spineMaxRotation);
+</code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="head-look">Head Look</h1>
+<p>The final, and probably easiest to do, is the head look. This is really just rotating the head bone to wherever you want it to look. You can also half rotate the neck toward the look direction to give it a more natural twist.</p>
+<p>You might think that just looking in the forward direction of the car is enough, but you’ll find it looks pretty silly while drifting. Instead, have the head look toward the velocity of the car. If the velocity is backward, have it look toward the rear vision mirror.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 direction = car.velocity.normalized;
+<span style="color:#66d9ef">if</span> (Vector3.Dot(direction, car.forward) &lt; <span style="color:#ae81ff">0.1f</span>)
+	direction = (rearVisionMirror - head.position).normalized;
+</code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="conclusion">Conclusion</h1>
+<p>To achieve any sort of complex procedural animation, I would recommend following these steps:</p>
+<ul>
+<li>Breakdown limbs into separate independent IK with simple controls (ideally, just a single position or scalar value).</li>
+<li>Breakdown behaviour for each limb into separate actions (eg steering wheel, gear changing, braking)</li>
+<li>Simulate the actions as simply as possible. Avoid working in cartesian coordinates. Instead, try to break it up into simple lerp-able values, or better yet, let an artist-made animation drive the behaviour.</li>
+<li>To transition between the different actions, simulate all actions at the same time and lerp between them.</li>
+</ul>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

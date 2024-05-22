@@ -1,0 +1,563 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Fog Of War - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Fog Of War</h1>
+	<div class="date">May 29, 2021</div>
+    <div>
+      <p>A long long time ago I was prototyping a basic city builder in Unity and implemented fog of war for it. To my surprise, fog of war is an effect that many developers struggle with, so much so that I released <a href="http://u3d.as/mDo">FogOfWar</a> on the unity asset store and has had quite a bit of success over the years. In this post, I will decipher the magic behind how fog of war works.</p>
+<p><img src="/blog/fog_of_war/Clouds.png" alt="HSV"></p>
+<p>For those that are new to the concept of fog of war, typically we want these features:</p>
+<ul>
+<li>Map is hidden by default.</li>
+<li>Certain units clear a path in the fog as they move through it.</li>
+<li>Different units may have different shapes (circles, cones, boxes, etc).</li>
+<li>When leaving an unfogged area, it may return to being fogged or partially fogged.</li>
+<li>Enemy units that are in the fog are hidden.</li>
+</ul>
+<p>Fog of war is typically found in Realtime Strategy Games, but can also be found in other top-down genres, such as shooters and adventure games.</p>
+<h1 id="representing-the-fog">Representing the Fog</h1>
+<p>Before we can do anything, we must understand what the fog is. Internally, we want to represent it as a texture that covers the entire map. This texture will contain a single 8-bit channel (R instead of RGBA), where 255 is fully fogged, and 0 is fully unfogged. Immediately you will see limitations in this:</p>
+<ul>
+<li>The texture resolution will dictate how fine the precision will be. There’s some tricks we can use later to avoid blurring.</li>
+<li>All pixels must be rectangular. If you have a hexagonal grid, this can still be solved, but you will need to have a way to convert from the hex grid to the texture’s pixel and back. It’s important to have a texture representation so that we can make use of hardware acceleration later on!</li>
+<li>There are only 256 shades/steps of fog. Since our monitors are only outputting 256 shades of color, this should not be an issue. It may not be sufficient if you are having slow-clearing fog, in which case you can up it to 16-bit or 32-bit.</li>
+<li>Anything outside the map range can not be measured. Everything outside will need to be completely fogged, or completely unfogged.</li>
+<li>Only a finite area can be represented. This can be solved using chunking (we’ll discuss this later).</li>
+<li>Only 2D spaces can be represented. For 3D fog volumes, the same logic here can be applied, but you will need to layer the fog texture on top of each other, or use a 3D texture.</li>
+</ul>
+<p>As harsh as these limitations may seem, in my experience, this is adequate for 99% of use cases.</p>
+<h1 id="representing-the-map">Representing the Map</h1>
+<p>Firstly, we need to state where the fog-able region of the map lies.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FogMap</span>
+{
+	Vector2 worldMinPosition;
+	Vector2 worldMaxPosition;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>If the worldMinPosition is (20, 30) and the worldMaxPosition is (40, 50), then the world center point of the map would be (30, 40). This is calculated by averaging the min and max points.</p>
+<p>I really need to emphasise that these positions/scales are in world-space. This distinction is important because we will also be working in fog-space. Fog-space is the texture coordinates of the fog texture. You may want to represent this in pixels, or in normalized coordinates (0 to 1). I will be using normalized coordinates just to keep things clear.</p>
+<p>So, the next step is to be able to convert between world-space and fog-space, and back again.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector2 WorldToFogSpace(Vector2 worldPos)
+{
+	<span style="color:#75715e">// Inverse Lerp
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> (worldPos - worldMinPosition) / (worldMaxPosition - worldMinPosition)
+}
+
+Vector2 FogToWorldSpace(Vector2 fogPos)
+{
+	<span style="color:#75715e">// Lerp
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> (worldMaxPosition - worldMinPosition) * fogPos + worldMinPosition;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>With just this information, we can start doing the exciting stuff.</p>
+<h1 id="manipulating-the-fog">Manipulating the Fog</h1>
+<p>So we have a unit in world-space and we want to clear a simple box around its location. Too easy:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">void</span> ClearBoxInFog(Vector2 worldPos, Vector2 worldSize)
+{
+	Vector2 minFogPos = WorldToFogSpace(worldPos - worldSize / <span style="color:#ae81ff">2</span>);
+	Vector2 maxFogPos = WorldToFogSpace(worldPos + worldSize / <span style="color:#ae81ff">2</span>);
+	SetFogInBox(fogTexture, minFogPos, maxFogPos, <span style="color:#ae81ff">0</span>);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>The hard part here is the SetFogInBox(). This will take the fog-space dimensions of the box and set all of those pixels in the texture to a 0 (recall that 0 is completely unfogged).</p>
+<p>The implementation of this really depends on your use case. Is your fog map relatively low resolution (roughly less than 128x128)? If this is the case, you may benefit from manipulating the texture all on the CPU by implementing your own rasterizer (multithreading is definitely possible here!). For any higher resolution, you will need to look at hardware acceleration. Using either compute shaders or rendering through the traditional render pipeline can work. Obviously these are out of scope for what we’re talking about here, so let’s move on.</p>
+<p>I have used a box as an example here, yet there are so many other shapes you can quite easily support. You can easily add any shape that you describe through formula. And for any shape you can’t, use a texture. Texture sampling on CPU can be a pain to optimise, but you should have no excuse if you’re implementing it on the GPU.</p>
+<p>Another point to make is that our fog is not binary (on or off). If you want to clear a circle, have the fog fade out along the edges to remove any aliasing.</p>
+<p><img src="/blog/fog_of_war/SmoothedCircle.png" alt="HSV"></p>
+<p>Okay, so we’ve got our fog stored in a texture, and it’s clearing it up for us. This isn’t going to interact well with our game unless we can’t check if an enemy unit is in the fog or not.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">bool</span> IsUnitInFog(Vector2 unitWorldPos)
+{
+	Vector2 fogPos = WorldToFogSpace(worldPos);
+	<span style="color:#66d9ef">return</span> fogTexture.Sample(fogPos) &gt; <span style="color:#ae81ff">128</span>;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<h1 id="putting-it-together">Putting it Together</h1>
+<p>So putting this all together, we end up with a loop like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Texture fogTexture;
+Unit[] units;
+
+<span style="color:#66d9ef">void</span> UpdateFog()
+{
+	<span style="color:#75715e">// clear all pixels
+</span><span style="color:#75715e"></span>	SetAllPixels(fogTexture, <span style="color:#ae81ff">255</span>);
+	
+	<span style="color:#75715e">// rasterize all units
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; units.length; ++i)
+	{
+		RenderUnitToFog(fogTexture, units[i])
+	}
+	
+	RenderToScreen(fogTexture);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>If we want to remember the fog and leave it fully cleared, we can remove the SetAllPixels() call so that the fog will remain as it was before. But what if we want to leave past-explored areas  as partially fogged (let’s say a fog value of 128)? For this, we will need to have a few extra textures.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Texture currentFogTexture;
+Texture pastFogTexture;
+Texture combinedFogTexture;
+Unit[] units;
+
+<span style="color:#66d9ef">void</span> UpdateFog()
+{
+	<span style="color:#75715e">// clear all pixels
+</span><span style="color:#75715e"></span>	SetAllPixels(currentFogTexture, <span style="color:#ae81ff">255</span>);
+	
+	<span style="color:#75715e">// rasterize all units
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; units.length; ++i)
+	{
+		RenderUnitToFog(currentFogTexture, units[i])
+	}
+	
+	<span style="color:#75715e">// move fog data 
+</span><span style="color:#75715e"></span>	pastFogTexture = AddToPastFogTexture(pastFogTexture, currentFogTexture);
+	combinedFogTexture = CombineFogTextures(pastFogTexture, currentFogTexture);
+	
+	RenderToScreen(combinedFogTexture);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>The implementation of AddToPastFogTexture() will go through each pixel and perform the following operation:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">pastValue = Min(pastValue, currentValue);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="/blog/fog_of_war/MinCombine.png" alt="HSV"></p>
+<p>That way, pastFogTexture will always contain a 0-255 value of the most cleared any part of the map has ever been.</p>
+<p>CombineFogTextures() will do the following operation:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">byte</span> partialValue = pastValue * <span style="color:#ae81ff">128</span> / <span style="color:#ae81ff">255</span>;
+combinedValue = Min(currentValue, partialValue);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="/blog/fog_of_war/FinalCombine.png" alt="HSV"></p>
+<p>So the combined value will be the partial value (128) or the current value if it is less fogged.</p>
+<h1 id="rendering-the-fog">Rendering the Fog</h1>
+<p>Alright, this is the important part. What’s the point of all this if we can’t see it?
+Unfortunately, there’s no clear best way of rendering the fog, yet there are many options of doing it.</p>
+<h1 id="post-process">Post Process</h1>
+<p>This will be the easiest to implement and be the most modular. I use this in my FogOfWar unity asset.</p>
+<p>After the entire scene has been rendered (without fog), we will have the color of our scene and a depth buffer. Using the depth buffer, we can reconstruct the world position of any visible pixel. The method of doing this can vary greatly per game engine and rendering API, but the basic premise is:
+Determine the pixel being rendered in normalized view space (0 to 1).
+Sample the depth texture at this position to get the depth value.
+Convert the depth value to the world position from the view-projection matrix.</p>
+<p>With the world-space position of the pixel, we can then call our WorldToFogSpace() function from earlier to sample the fog texture.</p>
+<p>Pros:</p>
+<ul>
+<li>A single draw call to render the fog.</li>
+<li>Only one shader is required.</li>
+<li>Works with both deferred and forward renderers.</li>
+<li>Fog is only rendered once per visible pixel.</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>Only depth-writing surfaces will receive correct fog values. This may be an issue with transparent objects such as windows or particles.</li>
+</ul>
+<h1 id="per-shader">Per-Shader</h1>
+<p>In your world-space shaders, get the world position of every fragment being rendered and put it through our WorldToFogSpace() function from earlier. Then use that position to sample the fog texture. This works similarly to lights in a forward renderer.</p>
+<p>Pros:</p>
+<ul>
+<li>Works with all objects, regardless of transparency.</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>Must modify every single shader that is rendering in world space.</li>
+<li>May have color issues with deferred renderers.</li>
+<li>Discarded pixels will be more expensive due to the fog being calculated. This can be circumvented with a depth prepass.</li>
+</ul>
+<h1 id="alternative-solutions">Alternative Solutions</h1>
+<p>I’ve heard of some games using grid-like meshes, or rendering a plane over the entire map with the fog texture on it, which gives more controls to the CPU. Older games (pre-GPU) would rasterize over their scene, or even use tiled sprites. It wouldn’t be unreasonable to even have a dense particle system over the scene. It all depends on what look you’re going for and what limitations you’re dealing with.</p>
+<h1 id="optimisations">Optimisations</h1>
+<p>Before we get into some of the more advanced things you can do, we should probably optimise what we’ve done so far.</p>
+<p>For general optimisations:</p>
+<ul>
+<li>Reduce the resolution of the map. This is almost always the largest bottleneck. If this is not an option, consider adding some sort of chunking system (discussed in Advanced Effects).</li>
+<li>Reduce the number of units being updated. Do units need to be updated if they’re offscreen? Can they be updated every X number of frames instead? Could a simpler shape be used instead when they are offscreen?</li>
+<li>Update the fog over multiple in-game frames. For example, the fog may update once every 5 in-game frames. This is surprisingly bearable as the fog as the fog does not change significantly on a frame-by-frame basis.</li>
+</ul>
+<p>CPU optimisations:</p>
+<ul>
+<li>If you have lots of units, you may be able to have a separate thread for each unit, which should make things a bit easier.</li>
+</ul>
+<p>GPU optimisations:</p>
+<ul>
+<li>When sampling the fog texture from the CPU, use a compute shader or a down-sampled copy of the texture.</li>
+<li>Batch together unit shapes into a single draw call using instancing.</li>
+</ul>
+<h1 id="advanced-effects">Advanced Effects</h1>
+<h1 id="chunking">Chunking</h1>
+<p>If your scene can be broken down into 2D chunks, you can do something like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Texture fogTextureCopy = fogTexture.Copy();
+Vector2 fogOffset = WorldToFogSpace(map.worldCenter) - WorldToFogSpace(newCenter);
+fogTexture.MoveAllPixels(fogOffset);
+map.worldCenter = newCenter;
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>What this is doing is keeping a copy of the fog texture, moving the map’s position, then reapplying the fog texture with an offset so that it aligns with the old map position. This can create a seamless experience when you can keep walking infinitely and there will always be more fog. Obviously, if you want to remember the fog from previous chunks, you’ll need to store them somewhere and pull them up whenever you swap chunks.</p>
+<h1 id="minimaps">Minimaps</h1>
+<p>It’s common to reflect the fog clearing in a minimap. The concept is exactly the same as rendering to the screen. You can optimise by just taking the fog texture and applying it over the top of your other minimap UI. Once again, it comes down to what look you’re trying to achieve.</p>
+<h1 id="line-of-sight">Line Of Sight</h1>
+<p>If a wall stands between your unit and a point in the fog, should the fog be cleared? If your answer is yes, you will want to implement a line of sight component. This behaves much like a 2D lighting system, so we’ll use a similar strategy here.</p>
+<p><img src="/blog/fog_of_war/LineOfSight.png" alt="HSV"></p>
+<p>The plan is to raycast outward from the unit’s position, store the max visible distance of each ray, and use that to determine the visibility later one when we’re rasterizing the unit’s shape.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">float</span>[] GetVisibilityDistances(Vector3 worldPos, <span style="color:#66d9ef">int</span> rayCount, <span style="color:#66d9ef">float</span> maxRayDistance)
+{
+	<span style="color:#66d9ef">float</span>[] distances = <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">float</span>[rayCount];
+	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; rayCount; ++i)
+	{
+		<span style="color:#66d9ef">float</span> radians = i / (rayCount * PI * <span style="color:#ae81ff">2</span>);
+		Vector3 direction = <span style="color:#66d9ef">new</span> Vector2(Sin(radians), Cos(radians));
+		<span style="color:#66d9ef">if</span> (Physics.Raycast(worldPos, direction, maxRayDistance, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">float</span> hitDistance))
+			distances[i] = hitDistance;
+		<span style="color:#66d9ef">else</span>
+			distance = maxRayDistance;
+	}
+	<span style="color:#66d9ef">return</span> distances;
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="/blog/fog_of_war/LineOfSightLines.png" alt="HSV"></p>
+<p>If you’re rasterizing on the GPU, this array of distances can be converted to a 1D texture (or multiple can be combined into a 2D texture) to be passed to the GPU.</p>
+<p>Obviously, all these raycasts are going to be a significant hit on performance. I recommend keeping it as low as possible, such as 8 for a full circle. If the unit’s shape is a semi circle, it will be better to only raycast within the visible semicircle by limiting the angle. With this, you may be able to get the raycast count down to 2 or 3 per unit.</p>
+<h1 id="is-this-just-a-fancy-2d-lighting-system">Is This Just A Fancy 2D Lighting System?</h1>
+<p>At this point, you might be thinking that our fog of war systems can also work as a 2D lighting system. Technically, yes. If you substitute the word “unit” with “light source”, and “line of sight” with “lit areas”, then it is practically a 2D light system. This happens to be something that many users of my FogOfWar asset use the asset for. And, although it works, I must stress that what we have created here is not optimized for lighting, and very much lacking in features.</p>
+<p>For example, how can we set the color of unit shapes? How can we implement shadow bounces/GI? How can we have this interact with normals, glossiness, roughness, AO, and all the other cool PBR stuff?</p>
+<p>It is very possible to achieve all this, but there would need to be large changes made throughout the process. Maybe another time&hellip;</p>
+<h1 id="avoiding-aliasing">Avoiding Aliasing</h1>
+<p>Texture-based fog of war is very prone to aliasing. This is where you can see the individual pixels in the fog texture. The obvious solution is to increase the resolution of the fog texture, yet this will quickly kill performance.</p>
+<p>Alternatively, you can apply a blur to the final fog texture. This will need to be non-destructive (ie it should output to a separate temporary texture and not the persistent fog values, otherwise the blur will seep across the map over time). A basic gaussian blur can do wonders for aliased fog:</p>
+<p><img src="/blog/fog_of_war/Blur.png" alt="HSV"></p>
+<h1 id="improving-the-visuals">Improving The Visuals</h1>
+<p>So far, our fog has just been a plain boring color. Wouldn’t it be cool if we had some sort of animating cloud texture instead? Maybe the clouds could animate away instead of just an instant blend?</p>
+<p>If we’re rendering the fog with shaders (including post processing), we will have a world position for each pixel. We can convert this from a 3D position to a 2D position (depending on the axes you’re using), then use that as texture coordinates for a tiling texture. Alternatively, you can use the screen space position to render a screen space texture. Both of these have the ability to render the output from a separate render target, allowing full control over animation of the clouds.</p>
+<p><img src="/blog/fog_of_war/Clouds.png" alt="HSV"></p>
+<p>There’s one more thing irking me. If our map resolution is quite low, we’ll see these boring gradients when the background is blending with the fog. If we have a heightmap of our cloud texture, we can add variation to the fog amount. Each fragment on screen can do this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">fogAmount = saturate(fogAmount + (cloudHeightTexture.Sample(uv) - <span style="color:#ae81ff">0.5</span>) * variance);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>The variance variable should be between 0 and 1, and will control how strong the height will affect the fog amount. This is the equivalent to <a href="http://untitledgam.es/2017/01/height-blending-shader/">height-based blending for surfaces</a>.</p>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

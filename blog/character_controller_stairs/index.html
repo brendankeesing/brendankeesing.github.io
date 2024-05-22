@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Character Controller: Stairs - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Character Controller: Stairs</h1>
+	<div class="date">March 7, 2021</div>
+    <div>
+      <p>Have you ever played a game and came across something like this?</p>
+<p><img src="/blog/character_controller_stairs/FloatingFeet.png" alt="HSV"></p>
+<p>This is a problem that every 2D and 3D programmer must face at some point. Stairs are a tricky obstacle to get characters to maneuver over because they’re bumpy, steep, and have vertical parts. Running up stairs may require the character to jump up each step, and running down may make the character airborne and glide to the bottom, as though they had just run off a tall ledge. What we want is for the character to stick to the stairs, not get airborne, move at a constant speed (that we can control), and not bounce up and down.</p>
+<p>This problem is typically solved using one of two methods (and they’re both kind of rubbish).</p>
+<h1 id="solution-1-capsule-collider-for-character">Solution 1: Capsule Collider for Character</h1>
+<p>What if you just put a capsule around the character? If you make the bottom round enough, the character should be able to slide up and down the surface!</p>
+<p><img src="/blog/character_controller_stairs/CapsuleCollider.png" alt="HSV"></p>
+<p>Unfortunately, this has some issues.</p>
+<p>Firstly, if the character’s feet may not be aligned with the steps correctly, such as when the character is on the edge of the step.</p>
+<p><img src="/blog/character_controller_stairs/CapsuleStairs.png" alt="HSV"></p>
+<p>Due to the corner of the stairs colliding with the curve of the capsule, this will slow the character down when going up, resulting in jittery movement. You’ll see the whole body bob up and down as it goes over each step.</p>
+<p>And what about sticking to the stairs when coming down at high speeds? This does nothing to cater for that.</p>
+<p>Also, how do you determine how steep the stairs are? Afterall, you probably want the player to slow down when going up steep stairs. Or maybe you want to maintain the same speed as running on a horizontal surface. Either way, you’re not going to have complete control over the movement speed.</p>
+<h1 id="solution-2-sloped-collision-for-stairs">Solution 2: Sloped Collision for Stairs</h1>
+<p>The second solution is to use a separate sloped collision mesh for your stairs. This way you only need to worry about your character moving up and down ramps. This is great because if your character can already run along the flat ground, going up and down a slope should come free. Used in conjunction with the capsule collider, friction will be minimised and the movement will be super smooth, right?</p>
+<p><img src="/blog/character_controller_stairs/StairCollider.png" alt="HSV"></p>
+<p>Yeah, kind of, but there are downsides to this.</p>
+<p>Firstly, the character will usually move faster going down the stairs, and slower going up. Have you ever tried running down stairs? If you go too fast, it’s not pretty. There are ways around this (like raycasting toward the ground and adjusting the speed based on surface normal).</p>
+<p>Secondly, you’ll find that the character’s feet either float in the air or penetrate the stair’s mesh.</p>
+<p><img src="/blog/character_controller_stairs/StairColliderFloating.png" alt="HSV"></p>
+<p>Also, this doesn’t address the issue of sticking the character to the stairs. If the slope is too steep and the character is moving too fast, the character will still fly from the top when coming down. Once again, this can be solved by raycasting to get the distance to the ground and forcibly sticking the character in the correct vertical position, which can be icky to calculate if your character’s collision is a box or something more complicated.</p>
+<p>Okay, so neither of these solutions are great, so what should we do?</p>
+<h1 id="solution-3-raycast-snapping">Solution 3: Raycast Snapping</h1>
+<p>So it seems like we want complete control over how the character moves along this complex surface, including the speed, velocity, and sticking to the surface. But notice how this doesn’t really have anything to do with the shape of the character? What if we remove the collider from the character entirely for now, and just use good old raycasts to solve it. This is a good way to think about it:</p>
+<p><img src="/blog/character_controller_stairs/CharacterCollider.png" alt="HSV"></p>
+<p>What we’re doing here is raycasting from the hips (or the highest point that the character can step up) down through the ground (to the lowest point that the character can step down to). There is also a point around the feet. This is where we want the ground to be.</p>
+<p>Alright, so how does this work?</p>
+<p>First we raycast down. If it doesn’t hit anything, then you can trust that we’re airborne.</p>
+<p>If we have hit something, we want to move the character’s feet toward this point. This means cancelling the character’s vertical velocity and either shifting the character up or down. This doesn’t need to be an immediate jolt to the correct position, it can be a smooth lerp (be careful not to make it too slow or your character will slowly sink into the stairs or float above).</p>
+<p>What about controlling the speed based on the stair&rsquo;s/slope’s steepness? Well we already know how far below or above the character is from the target, so we can use that to dictate the speed.</p>
+<p>You should expect the code to look something like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Vector3 bodyPosition;
+Vector3 footPosition;
+<span style="color:#66d9ef">float</span> stepHeight;
+<span style="color:#66d9ef">float</span> snapSpeed;
+
+<span style="color:#66d9ef">void</span> RaycastSnapToGround()
+{
+	Vector3 rayOrigin = footPosition + Vector3.up * stepHeight;
+	Vector3 rayDirection = Vector3.down;
+	<span style="color:#66d9ef">float</span> rayDistance = stepHeight * <span style="color:#ae81ff">2</span>;
+	<span style="color:#66d9ef">bool</span> isOnGround = Raycast(rayOrigin, rayDirection, rayDistance, <span style="color:#66d9ef">out</span> Vector3 hitPoint);
+	<span style="color:#66d9ef">if</span> (isOnGround)
+		<span style="color:#66d9ef">return</span>;
+	
+	velocity.y = <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// stop all vertical movement
+</span><span style="color:#75715e"></span>	
+	<span style="color:#66d9ef">float</span> distanceToGround = hitPoint.y - footPosition.y;
+	bodyPosition.y = Lerp(bodyPosition.y, bodyPosition.y + distanceToGround, deltaTime * snapSpeed);
+}
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>You may find there are issues due to a raycast being infinitely thin. This is obviously not an accurate representation of a human leg. To combat this, we can use a spherecast (a raycast with a radius), or perform multiple raycasts in a circle around the character’s feet. This has the added benefit of calculating the angle of the stairs which can help with controlling the speed of the character when going up or down the stairs.</p>
+<p>So the upsides for this solution are:</p>
+<ul>
+<li>Don’t need to change any environment meshes</li>
+<li>Better control over the speed when moving up and down stairs</li>
+<li>Control how high and low the character can step</li>
+<li>Control how fast the character can move vertically</li>
+<li>Trivial to add foot IK</li>
+<li>Still very performant</li>
+</ul>
+<p>But what about colliders for the character? Without colliders, the character will be able to walk through walls! What makes this great is that you can put collision on the character as usual, just make sure there’s no collider over the raycast area (ie the legs).</p>
+<p><img src="/blog/character_controller_stairs/Raycast.png" alt="HSV"></p>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

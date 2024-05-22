@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="alternate" type="application/rss+xml"  title="RSS Feed for brendankeesing.com" href="/rss.xml" />
+	<style type="text/css">
+	body {
+		font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		line-height: 1.5;
+		max-width: 1040px;
+		margin: 0 auto;
+		color: white;
+		background: #080808;
+	}
+	
+	.blogsubtitle {
+		font-style: italic;
+		font-size: 18px;
+		text-align: center;
+		margin: 0 auto;
+		line-height: 0;
+		margin-bottom: 4ch;
+		color: #c0c0c0;
+	}
+	
+	.gamesubtitle {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 28px;
+		margin-top: -40px;
+	}
+	
+	.gamedescription {
+		font-style: italic;
+		text-align: center;
+		color: #dddddd;
+		font-size: 24px;
+	}
+
+	a {
+		color: white;
+		font-weight: bold;
+	}
+
+	img {
+		border: none;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 100%;
+	}
+
+	.aboutimage {
+		border: none;
+		float:right;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: auto;
+	}
+
+	p {
+		text-align: justify;
+	}
+
+	div.heading {
+		font-weight: bold;      
+		text-transform: uppercase;
+	}
+
+	.title {
+		text-decoration: none;
+		font-size: 35px;
+	}
+
+	.titlelink {
+		text-decoration: none;
+		font-size: 18px;
+		font-weight: normal;
+	}
+
+	.pagetitle {
+		font-size: 50px;
+		font-weight: 400;
+		letter-spacing: -1px;
+		line-height: 1.1;
+		margin-bottom: 3%;
+	}
+
+	h1 {
+		font-size: 35px;
+		font-weight: 400;
+	}
+
+	.date {
+		font-style: italic;
+		margin-bottom: 2ch;
+		color: #c0c0c0;
+		font-size: 18px;
+	}
+
+	.projstat {
+		font-style: italic;
+		color: #dddddd;
+		font-size: 16px;
+		margin-top: -10px;
+	}
+
+	table {
+		margin-left: auto;
+		margin-right: auto;
+		border-spacing: 10px 10px;
+	}
+	
+	table th:first-of-type {
+		width: 50%;
+	}
+	
+	table th:first-of-type(2) {
+		width: 50%;
+	}
+
+	.homebutton {
+		position: relative;
+		text-align: center;
+	}
+
+	.homebuttontext {
+		position: absolute;
+		bottom: -3px;
+		right: 5px;
+		color: white;
+		font-size: calc(5px + 1.1vw);
+	}
+
+	.presskit {
+		text-align: center;
+	}
+	</style>
+	<title>Ways To Make Cutscenes - Brendan Keesing</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+	<meta charset="UTF-8"/>
+</head>  
+<body>
+  
+	<br>
+<center>
+	<div style="display: inline-block; vertical-align:middle;">
+		<a href="/" class="title">&nbsp;&nbsp;&nbsp;Brendan Keesing&nbsp;&nbsp;&nbsp;</a><br>
+		<hr style="width: 200%;position: relative; left: -50%;">
+		
+			<div style="display: inline-block; width: 100%;">
+				<a class="titlelink" href="/fomography/">FOMOGRAPHY</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/projects/">Projects</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/blog/">Blog</a>
+				&nbsp;&nbsp;&nbsp;
+				<a class="titlelink" href="/about/">About</a>
+			</div>
+		
+	</div>
+</center><br>
+	<div style="background: #181818;"><br>
+	<div style="padding-left:70px;padding-right:70px;">
+	<main class="app-container">
+	<h1 class="pagetitle">Ways To Make Cutscenes</h1>
+	<div class="date">April 2, 2021</div>
+    <div>
+      <p>Cutscenes are one of those things that are important to a lot of games but you’ll rarely (if ever) hear game developers discussing solutions to the issue. Just slapping legions of text on the screen is simple enough, yet anything more may send even a seasoned programmer into a spiral of over-complexity. The best solution really comes down to your requirements.</p>
+<p>Here, we’ll discuss the various options often used to solve the task.</p>
+<h1 id="data-based-scripts">Data-Based Scripts</h1>
+<p>Suppose your cutscene consists of basic dialog, where each character takes it in turn to display some text on the screen and maybe a portrait of the character is shown. This can be solved with a simple data-based script. A conversation between two characters might consist of a plain text file with a format like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">Johnny;Have you seen the dragon that lives at the mountain top?
+Mary;No, but I have heard the stories. Is it really as dangerous as they say?
+Johnny;No one has returned from it’s lair, so we can only assume the worst.</code></pre></td></tr></table>
+</div>
+</div>
+<p>In this example, each line from a character is shown on a separate line, with the character’s ID first (Johnny and Mary), with the text to display after a semicolon.</p>
+<p>You might want to fit in some more data, such as the path to an audio file to play, or an image for a character portrait, coordinates of where to display the character portrait on screen etc.</p>
+<p>You can write your own parser for this quite easily, but if you want something well established and versatile, there are no shortages of options. Some from the top of my head are CSV, JSON, XML, YAML and INI.</p>
+<p>The real benefit of this approach is simplicity. There’s no need to make fancy editors or complex rules, it’s as simple as opening up a text editor and punching in some data.</p>
+<p>This can be extended to be much more complex. It is not too difficult to transform it into a command list with parameters. Suppose we want to make our cutscene more complex by providing animation. Perhaps we could put in the data like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">MOVE;Johnny;12;-64
+DIALOGUE;Johnny;Have you seen the dragon that lives at the mountain top?
+ANIMATION;Mary;shake_head
+DIALOGUE;Mary;No, but I have heard the stories. Is it really as dangerous as they say?
+ANIMATION;Johnny;shrug
+DIALOGUE;Johnny;No one has returned from it’s lair, so we can only assume the worst.</code></pre></td></tr></table>
+</div>
+</div>
+<p>Each line now represents an action. The action will execute, and only when it’s finished will it continue to the next line. You might think this is starting to look like a regular script, yet you’ll find this has significant limitations.</p>
+<p>For example, how can we do branching, like an if statement for a while loop? Or assigning variables and math functions? These are not impossible to do. You can make a GOTO command to jump to a specific line, make an ASSIGN command to create variables, and a GREATER_THAN command to compare variables.</p>
+<p>Another limitation is that you can’t do multiple things at once. What if we want Johnny and Mary to animate at the same time? Once again, there may be ways around this, but the more we extend it, the more frustrating it is to use.</p>
+<p>As you may be thinking, this is getting very tedious and will ultimately leave you thinking “Surely there’s a better way.”</p>
+<p>Pros:</p>
+<ul>
+<li>Trivial to parse</li>
+<li>No custom editors required</li>
+<li>Easy to extend with more commands</li>
+<li>Non-programmer friendly</li>
+</ul>
+<p>Cons</p>
+<ul>
+<li>Branching and variables can get very tedious and hard to visualize the flow</li>
+<li>Can’t parallelize easily</li>
+</ul>
+<h1 id="node-based-scripts">Node-Based Scripts</h1>
+<p>You may have seen these cool node-based editors, such as Unreal’s blueprints or Unity’s Bolt. These are traditionally called Flow Graphs, and give a non-programmer-friendly interpretation of program instructions.</p>
+<p>Nodes are a simple concept and can be extended to some crazy complex things, such as managing variables, directing execution flow, embedded flow graphs, branching, real-time debugging and more.</p>
+<p>Another thing you may have seen are the <a href="https://80.lv/articles/blueprints-from-hell-share-the-horror/">nightmarish spaghetti graphs</a>.</p>
+<p><img src="/blog/cutscenes/CrazyNodes.png" alt="HSV"></p>
+<p>Just like text programming, nodes are very susceptible to mess and require a lot of care to keep clean. It’s important to be aware of the types of things that can introduce this mess into your graphs. Flow graphs are usually really keeping complex math clean. The main idea should always be to keep your graphs as small and focused as possible. Experienced programmers may know this intuitively, but most others will not. Be prepared to deal with that.</p>
+<p>Pros:</p>
+<ul>
+<li>Non-programmer friendly</li>
+<li>Easily supports branching</li>
+</ul>
+<p>Cons</p>
+<ul>
+<li>A lot of work to get an editor up and running</li>
+<li>Hard to keep clean with more complex graphs (especially when using math)</li>
+<li>Can’t parallelize</li>
+</ul>
+<h1 id="coroutine-scripts">Coroutine Scripts</h1>
+<p>Why not just use a scripting language for cutscenes? This will give us full control over anything we could ever want! Let’s see what it looks like:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs">Johnny.MoveTo(<span style="color:#ae81ff">12</span>, -<span style="color:#ae81ff">64</span>);
+Johnny.Talk(<span style="color:#960050;background-color:#1e0010">“</span>Have you seen the dragon that lives at the mountain top?<span style="color:#960050;background-color:#1e0010">”</span>);
+Mary.PlayAnimation(<span style="color:#960050;background-color:#1e0010">“</span>shake_head<span style="color:#960050;background-color:#1e0010">”</span>);
+Mary.Talk(<span style="color:#960050;background-color:#1e0010">“</span>No, but I have heard the stories. Is it really <span style="color:#66d9ef">as</span> dangerous <span style="color:#66d9ef">as</span> they say?<span style="color:#960050;background-color:#1e0010">”</span>);
+Johnny.PlayAnimation(<span style="color:#960050;background-color:#1e0010">“</span>shrug<span style="color:#960050;background-color:#1e0010">”</span>);
+Johnny.Talk(<span style="color:#960050;background-color:#1e0010">“</span>No one <span style="color:#66d9ef">as</span> returned <span style="color:#66d9ef">from</span> its lair, so we can only assume the worst.<span style="color:#960050;background-color:#1e0010">”</span>);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>Looks great, right? If you try to implement it, you will run into trouble because almost all programming languages will execute the next statement immediately, instead of waiting for the last one to finish. In the above example, Talk() will be called immediately after MoveTo(), resulting in everything happening at once.</p>
+<p>This is where coroutines come in. Coroutines allow the code to wait until the code completes before moving to the next line. This may look something like this:</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">yield</span> Johnny.MoveTo(<span style="color:#ae81ff">12</span>, -<span style="color:#ae81ff">64</span>);
+<span style="color:#66d9ef">yield</span> Johnny.Talk(<span style="color:#960050;background-color:#1e0010">“</span>Have you seen the dragon that lives at the mountain top?<span style="color:#960050;background-color:#1e0010">”</span>);
+Mary.PlayAnimation(<span style="color:#960050;background-color:#1e0010">“</span>shake_head<span style="color:#960050;background-color:#1e0010">”</span>);
+<span style="color:#66d9ef">yield</span> Mary.Talk(<span style="color:#960050;background-color:#1e0010">“</span>No, but I have heard the stories. Is it really <span style="color:#66d9ef">as</span> dangerous <span style="color:#66d9ef">as</span> they say?<span style="color:#960050;background-color:#1e0010">”</span>);
+Johnny.PlayAnimation(<span style="color:#960050;background-color:#1e0010">“</span>shrug<span style="color:#960050;background-color:#1e0010">”</span>);
+<span style="color:#66d9ef">yield</span> Johnny.Talk(<span style="color:#960050;background-color:#1e0010">“</span>No one <span style="color:#66d9ef">as</span> returned <span style="color:#66d9ef">from</span> its lair, so we can only assume the worst.<span style="color:#960050;background-color:#1e0010">”</span>);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>In this example, using the yield keyword will wait for the statement to complete before moving on. This also opens opportunities to parallelize the cutscene. In the above example, the animation will start playing but immediately move to the next line, resulting in the animation playing while the character is talking.</p>
+<p>So how can we implement this? We could use an external scripting language (such as Lua, Python, Javascript) or simply use whatever language the game is coded in. Some languages, such as C#, support coroutines, but other, such as C and C++ (before C++20), do not.</p>
+<p>Pros:</p>
+<ul>
+<li>Easily extendable</li>
+<li>Lots of options for scripting languages</li>
+<li>Can be parallelized</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>More difficult for non-programmers to learn</li>
+<li>Localization needs to use IDs</li>
+<li>Can be a nightmare to roll your own scripting language</li>
+</ul>
+<h1 id="timeline-editor">Timeline Editor</h1>
+<p>Timeline editors are often used in animation and video editing software. They present a series of tracks, where each track can have clips and events placed at specific times. This is a very animation-focused tool, giving complete frame-by-frame control over parallelized actions. On top of that, it also provides instant playback so you can see exactly what it will look like in the game without having to recompile or even play the game.</p>
+<p><img src="/blog/cutscenes/Timeline.png" alt="HSV"></p>
+<p>As great as timeline editors are for animation, they fall flat in two major areas: interactivity and automation.</p>
+<p>Suppose a dialog box appears and presents the player with an option. How will the cutscene wait for the action to complete? If there is a dynamic wait time in the timeline, all of the timeline times will be messed up. We could just pause the timeline, but then we won’t be able to animate anything while we’re waiting for the player to perform their action.</p>
+<p>And how will the action know what to do depending on the player’s choice? We will want the cinematic to branch down multiple paths. So should we do something tricky like disabling certain tracks under specific conditions?</p>
+<p>You might have a consistent style for displaying dialogue boxes, so you’d like to wrap up all of the functionality for dialogue boxes into a single automated flow. How will this fit in the timeline?</p>
+<p>These problems may or may not be solvable, but it’s clear that any solution will be hacky and unintuitive.</p>
+<p>Pros:</p>
+<ul>
+<li>Great for animation</li>
+<li>Instant playback (WYSIWYG)</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>No branching</li>
+<li>No pausing to wait for interactions</li>
+<li>Can be complex to create your own editor</li>
+</ul>
+<h1 id="hybrid-using-the-right-tool-for-the-job">Hybrid (Using the right tool for the job)</h1>
+<p>If you’re like me, you might find that none of these solutions tick all the boxes. Cutscenes are difficult, dynamic and varied, and it’s hard to predict what you’ll need it to. That’s why I would recommend using a hybrid of the above.</p>
+<p>For example, in my upcoming game, I use coroutines for the majority of cutscenes, but sometimes I need something more fancy for complex animations. I solved this by having the coroutines able to play timeline clips.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cs" data-lang="cs"><span style="color:#66d9ef">yield</span> DisplayDialog(<span style="color:#960050;background-color:#1e0010">“</span>fisherman_hello<span style="color:#960050;background-color:#1e0010">”</span>);
+<span style="color:#66d9ef">yield</span> PlayTimeline(timelineClip);
+</code></pre></td></tr></table>
+</div>
+</div>
+<p>This means that we can get the best of both worlds. Don’t be scared to mix and match to suit your needs because you’ll often find that forcing a system to do something it wasn’t designed to do will have catastrophic long-term results. Pick the right tool for the job.</p>
+<h1 id="localization">Localization</h1>
+<p>One thing that we’ve ignored in all of this is localization. Localization is the system that replaces the dialogue text depending on which language the player has selected. Ideally, we should be able to make all of our cutscenes in our preferred language and then have an automated process that can generate localization IDs that can then be passed to the translation team. This can be quite trivial with most forms of cutscenes, but you will run into a lot of trouble with scripting languages. What if the text is being passed in as a variable instead of a hard-coded string? This can be damn near impossible to detect, making automation ultimately futile. This just means that localization IDs must be maintained elsewhere.</p>
+
+    </div>
+		</main>
+	</div>
+	<br>
+</div>
+<br>
+<center>
+	<table><tr>
+		<td><a class="titlelink" href="https://twitter.com/brendankeesing"><img src="/TwitterIcon.svg" alt="Twitter" style="width:38px;height:38px;"></a></td>
+		<td><a class="titlelink" href="https://www.youtube.com/channel/UCMDOE3DyA8hhVOLwxTTFafg"><img src="/YouTubeIcon.svg" alt="YouTube" style="width:32px;height:32px;"></a></td>
+		<td><a class="titlelink" href="https://github.com/brendankeesing/"><img src="/GithubIcon.svg" alt="GitHub" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="mailto:brendankeesing@hotmail.com"><img src="/EmailIcon.svg" alt="Email" style="width:30px;height:30px;"></a></td>
+		<td><a class="titlelink" href="/rss.xml"><img src="/RSSIcon.svg" alt="RSS" style="width:30px;height:30px;"></a></td>
+	</tr></table>
+</center><br><br>
+
+</body>
+</html>

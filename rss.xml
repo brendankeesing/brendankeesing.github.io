@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+ <channel>
+  <title>brendankeesing.net</title>
+  <atom:link href="https://brendankeesing.com/rss.xml" rel="self" type="application/rss+xml" />
+  <link>https://brendankeesing.net</link>
+  <description>Chronicles of software wizardry</description>
+  <language>en-us</language>
+  <lastBuildDate>12 Nov 2020 00:00:00 +0000</lastBuildDate>
+
+ <item>
+  <title>Blending Colors</title>
+  <guid>http://brendankeesing.com/blog/blending_colors/</guid>
+  <link>http://brendankeesing.com/blog/blending_colors/</link>
+  <pubDate>27 Nov 2020 00:00:00 +0000</pubDate>
+ </item>
+
+ <item>
+  <title>Save Files</title>
+  <guid>http://brendankeesing.com/blog/save_files/</guid>
+  <link>http://brendankeesing.com/blog/save_files/</link>
+  <pubDate>26 Jan 2021 00:00:00 +0000</pubDate>
+ </item>
+  
+ </channel>
+</rss>
+    

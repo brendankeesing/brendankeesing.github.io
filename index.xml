@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on Brendan Keesing</title>
+    <link>http://brendankeesing.com/</link>
+    <description>Recent content in Home on Brendan Keesing</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://brendankeesing.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FOMOGRAPHY</title>
+      <link>http://brendankeesing.com/fomography/</link>
+      <pubDate>Sat, 29 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/fomography/</guid>
+      <description>~ At your last moment, what will you remember? ~ PRESS KIT
+FOMOGRAPHY is a story-driven photography adventure game. Set over the course of an entire lifetime, you play as a boy trying to rediscover and document his memories. What has been forgotten that only the photos can show? What memories do even the photos refuse to share? 
+          Relive your forgotten life to remember what made you into what you are.</description>
+    </item>
+    
+    <item>
+      <title>Complex Procedural Driver Animation</title>
+      <link>http://brendankeesing.com/blog/complex_procedural_driver_animation/</link>
+      <pubDate>Sat, 19 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/complex_procedural_driver_animation/</guid>
+      <description>While working on Torque Drift, I was given an opportunity to work on a procedural hand animation solution for the driver. This is a seemingly-ambitious proposition, as drift drivers have lots of crazy hand movements, yet can be achieved by using only basic techniques.
+One thing to point out is that this solution is reactive to the player’s input. In other words, the animation will lag behind the player’s actual button presses and will therefore not be 100% accurate.</description>
+    </item>
+    
+    <item>
+      <title>Fog Of War</title>
+      <link>http://brendankeesing.com/blog/fog_of_war/</link>
+      <pubDate>Sat, 29 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/fog_of_war/</guid>
+      <description>A long long time ago I was prototyping a basic city builder in Unity and implemented fog of war for it. To my surprise, fog of war is an effect that many developers struggle with, so much so that I released FogOfWar on the unity asset store and has had quite a bit of success over the years. In this post, I will decipher the magic behind how fog of war works.</description>
+    </item>
+    
+    <item>
+      <title>How FOMO Takes Photos</title>
+      <link>http://brendankeesing.com/blog/how_fomo_takes_photos/</link>
+      <pubDate>Sun, 09 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/how_fomo_takes_photos/</guid>
+      <description>Having spent far too long working on a photography game, I’ve spent a lot of time thinking and researching different ways to detect a good photograph of a subject in a virtual setting. I’m not convinced there’s a perfect way to do it, but I have managed to get satisfying results using a slew of different techniques.
+The idea here is to judge the image based on a few criteria, then add it up and give some sort of percentage score at the end.</description>
+    </item>
+    
+    <item>
+      <title>Ways To Make Cutscenes</title>
+      <link>http://brendankeesing.com/blog/cutscenes/</link>
+      <pubDate>Fri, 02 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/cutscenes/</guid>
+      <description>Cutscenes are one of those things that are important to a lot of games but you’ll rarely (if ever) hear game developers discussing solutions to the issue. Just slapping legions of text on the screen is simple enough, yet anything more may send even a seasoned programmer into a spiral of over-complexity. The best solution really comes down to your requirements.
+Here, we’ll discuss the various options often used to solve the task.</description>
+    </item>
+    
+    <item>
+      <title>Character Controller: Stairs</title>
+      <link>http://brendankeesing.com/blog/character_controller_stairs/</link>
+      <pubDate>Sun, 07 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/character_controller_stairs/</guid>
+      <description>Have you ever played a game and came across something like this?
+This is a problem that every 2D and 3D programmer must face at some point. Stairs are a tricky obstacle to get characters to maneuver over because they’re bumpy, steep, and have vertical parts. Running up stairs may require the character to jump up each step, and running down may make the character airborne and glide to the bottom, as though they had just run off a tall ledge.</description>
+    </item>
+    
+    <item>
+      <title>Character Controller: Smooth Movement</title>
+      <link>http://brendankeesing.com/blog/character_controller_smooth_movement/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/character_controller_smooth_movement/</guid>
+      <description>You want your character to move forward. Easy right? Get the input, multiply it by the speed and call it a day:
+1  velocity = joystick.y * movementSpeed * deltaTime;    Seems cool, but if you let go of the joystick, the character will come to an immediate stop. This is jarring. We want the character to have some sort of momentum, so they speed up and slow down smoothly.</description>
+    </item>
+    
+    <item>
+      <title>Ways To Save Files</title>
+      <link>http://brendankeesing.com/blog/save_files/</link>
+      <pubDate>Tue, 26 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/save_files/</guid>
+      <description>Saving the player’s progress is a small, yet crucial part of game dev that is often taken seriously too late into a project’s development. Your save system should be well thought out as early as possible as it can shape the way your game works in subtle ways, and can speed up testing throughout production.
+Getting the Data How do you gather all of the data that you want to save?</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>http://brendankeesing.com/about/</link>
+      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/about/</guid>
+      <description>Hey there, this is my personal website. Here you can find all the cool projects I&amp;rsquo;m working on as well as various ramblings on game development.
+I grew up in the small town of Myrtleford, Australia.
+In 2009 I moved to Melbourne and studied Advanced Diploma in Computer Systems Engineering and Bachelor of Arts (Game &amp;amp; Interactivity) / Bachelor Science (Computer Science &amp;amp; Engineering) at Swinburne University.
+In 2017 I started working at League of Monkeys (later renamed to Grease Monkey Games) as a general programmer.</description>
+    </item>
+    
+    <item>
+      <title>Blending Colors</title>
+      <link>http://brendankeesing.com/blog/blending_colors/</link>
+      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/blending_colors/</guid>
+      <description>How do you blend between two colors? Chances are, you&amp;rsquo;re just doing a standard lerp (linear interpolation) between RGB values, right? If we were to blend between red and green, we should see something like this:
+Result = (ColorB - ColorA) * t &amp;#43; ColorA
+We love this method because computers love this method, and when computers love something, they do it fast. But, have you ever noticed the weird dull splotch in the center?</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>http://brendankeesing.com/projects/</link>
+      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/projects/</guid>
+      <description>FOMOGRAPHY My Role: Everything
+Duration: 4+ years (ongoing)
+Team Size: 1
+Platform: Windows / Linux
+Release Date: 2023
+ FOMOGRAPHY is a photography adventure game that lets you experience and explore photography from all angles. Featuring a huge diverse environment to explore and lots of NPCs to interact with. This is my big solo project that I&amp;rsquo;m slowing chipping away at in my spare time.
+  Torque Drift (Steam | Apple Store | Google Play) My Role: Senior Programmer</description>
+    </item>
+    
+  </channel>
+</rss>
