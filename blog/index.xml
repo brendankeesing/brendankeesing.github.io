@@ -8,6 +8,15 @@
     <language>en-us</language>
     <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="http://brendankeesing.com/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>FOMOGRAPHY - A Postmortem</title>
+      <link>http://brendankeesing.com/blog/fomography_postmortem/</link>
+      <pubDate>Mon, 01 Sep 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://brendankeesing.com/blog/fomography_postmortem/</guid>
+      <description>FOMOGRAPHY has been a big part of my life for the last 6 and a half years. It’s ny far the largest solo project I’ve ever completed, and it was all done on a zero-dollar budget. It wasn’t a huge success from a financial viewpoint (not even close), yet it was a blast to make and brought many important game development lessons that will follow me into my future games.</description>
+    </item>
+    
+    <item>
       <title>Complex Procedural Driver Animation</title>
       <link>http://brendankeesing.com/blog/complex_procedural_driver_animation/</link>
       <pubDate>Sat, 19 Jun 2021 00:00:00 +0000</pubDate>

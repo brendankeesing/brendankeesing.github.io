@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://brendankeesing.com/blog/fomography_postmortem/</loc>
+    <lastmod>2025-09-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://brendankeesing.com/fomography/</loc>
     <lastmod>2023-07-29T00:00:00+00:00</lastmod>
   </url>
